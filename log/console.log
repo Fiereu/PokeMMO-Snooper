@@ -1,0 +1,20 @@
+[INFO 2023-05-18 23:29:26 MESZ][main] com.pokeemu.client.Client:-1 - Initialized logger in 6 ms
+[INFO 2023-05-18 23:29:26 MESZ][main] f.El:-1 - Created config folder C:\Users\Hanne\coding\PokeMMO-Snooper\config.
+[INFO 2023-05-18 23:29:26 MESZ][main] f.El:-1 - Loaded 0 config properties.
+[INFO 2023-05-18 23:29:26 MESZ][main] com.pokeemu.client.Client:-1 - Starting PokeMMO Client. Client revision: 22865
+[INFO 2023-05-18 23:29:26 MESZ][main] com.pokeemu.client.Client:-1 - https://pokemmo.com
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - Java Vendor: Amazon.com Inc.
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - Java Version: 17.0.6
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - Java Home: C:\Users\%OS_USERNAME%\.jdks\corretto-17.0.6
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - Client Home: C:\Users\%OS_USERNAME%\coding\PokeMMO-Snooper
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - OS name: Windows 11
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - OS version: 10.0
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - OS arch: amd64
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - JVM arch: 64
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - JVM Runtime: OpenJDK Runtime Environment
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - JVM version: 17.0.6+10-LTS
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - Max Heap Memory: 3796 MB
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - Locale: de_DE
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - File Encoding: UTF-8
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - Gdx version: 1.11.0
+[INFO 2023-05-18 23:29:26 MESZ][main] f.Ck:-1 - JVM Arguments: -javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2022.3.1\lib\idea_rt.jar=59110:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2022.3.1\bin -Dfile.encoding=UTF-8
