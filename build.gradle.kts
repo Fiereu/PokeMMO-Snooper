@@ -16,7 +16,7 @@ dependencies {
     implementation("net.bytebuddy:byte-buddy:1.14.4")
     implementation("net.bytebuddy:byte-buddy-agent:1.14.4")
 
-    // PokeMMO
+    // PokeMMO - update this to the latest version if you want to use this script
     implementation(files("libs/PokeMMO.jar"))
 }
 
@@ -25,12 +25,12 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(17)
 }
 
 // create task which runs the Snooper.kt main function and sets its working directory to "C:\Program Files\PokeMMO"
 val runSnooper = tasks.register<JavaExec>("runSnooper") {
     mainClass.set("SnooperKt")
     classpath = sourceSets["main"].runtimeClasspath
-    workingDir = file("C:\\Program Files\\PokeMMO")
+    workingDir = file("C:\\Program Files\\PokeMMO\\")
 }

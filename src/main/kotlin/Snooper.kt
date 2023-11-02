@@ -1,22 +1,29 @@
 import com.pokeemu.client.Client
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.agent.ByteBuddyAgent
+import net.bytebuddy.agent.builder.AgentBuilder
 import net.bytebuddy.asm.Advice
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy
 import net.bytebuddy.matcher.ElementMatchers
 
 val SEND_PACKET_METHODS = arrayOf(
-    "f.el#Mz0(Lf/KN;)V",
-    "f.Nh#Qy0(Lf/Qm;)V",
-    "f.Ip#Lu0(Lf/hr0;)V",
+    "f.in#F2(Lf/x1;)V", // Handshake packets (enchanging encryption keys etc)
+    "f.O30#MD0(Lf/wB0;)V", // Game packets
+    "f.ld0#CK(Lf/oV;)V", // Login packets
+    "f.FJ#D4(Lf/VK0;)V", // Chat packets
 )
 
+val HANDLE_PACKET_METHOD = "HA0()V" // every incoming packet inherits a handle method that is called in a new thread after the packet got decoded
+
+val POKEMMO_PACKAGE = "f." // the obfuscated package name of all PokeMMO classes
+
+// TODO: this is a very naive implementation. Enums and other objects are not handled properly and produce ugly output
 private fun recursivePrint(obj: Any, sb: StringBuilder, indent: Int, visitedObjects: MutableList<Any> = mutableListOf()) {
     if (visitedObjects.contains(obj)) {
         return
     }
     visitedObjects.add(obj)
-    val indentStr = " ".repeat(indent * 4)
+    val indentStr = " ".repeat(indent * 2)
     val fields = obj.javaClass.declaredFields
     for (field in fields) {
         try {
@@ -39,7 +46,7 @@ private fun recursivePrint(obj: Any, sb: StringBuilder, indent: Int, visitedObje
                     sb.append(java.lang.reflect.Array.get(value, i))
                 }
                 sb.append("]")
-            } else if (!value.javaClass.isPrimitive && !value.javaClass.name.startsWith("java.lang") && !value.javaClass.name.startsWith("java.util")) {
+            } else if (!value.javaClass.isPrimitive && value.javaClass.name.startsWith(POKEMMO_PACKAGE)) {
                 sb.append(value.javaClass.name)
                 sb.append(" {")
                 recursivePrint(value, sb, indent + 1, visitedObjects)
@@ -66,26 +73,47 @@ object SendInterceptor {
     @JvmStatic
     @Advice.OnMethodEnter
     fun intercept(@Advice.Argument(0) packet: Any) {
+        print("Outgoing packet: ")
+        printObj(packet)
+    }
+}
+
+object RecvInterceptor {
+    @JvmStatic
+    @Advice.OnMethodEnter
+    fun intercept(@Advice.This packet: Any) {
+        print("Incoming packet: ")
         printObj(packet)
     }
 }
 
 fun initHooks() {
     ByteBuddyAgent.install()
-    val bb = ByteBuddy()
 
     // Send Hooks
     for (method in SEND_PACKET_METHODS) {
         val clazzName = method.substringBefore('#')
         val methodName = method.substringAfter('#').substringBefore('(')
-        val clazz = Class.forName(clazzName)
-        bb.rebase(clazz)
-            .visit(
-                Advice.to(SendInterceptor::class.java).on(ElementMatchers.named(methodName))
-            )
-            .make()
-            .load(clazz.classLoader, ClassReloadingStrategy.fromInstalledAgent())
+        AgentBuilder.Default()
+            .with(AgentBuilder.InitializationStrategy.SelfInjection.Eager())
+            .type(ElementMatchers.named(clazzName))
+            .transform { builder, _, _, _, _ ->
+                builder.method(ElementMatchers.named(methodName))
+                    .intercept(Advice.to(SendInterceptor::class.java))
+            }
+            .installOnByteBuddyAgent()
     }
+    // Recv Hooks
+    // TODO: there is currently no way to distinguish between different packet types (e.g. game packets, login packets, chat packets etc)
+    val methodName = HANDLE_PACKET_METHOD.substringBefore('(')
+    AgentBuilder.Default()
+        .with(AgentBuilder.InitializationStrategy.SelfInjection.Eager())
+        .type(ElementMatchers.nameStartsWith(POKEMMO_PACKAGE))
+        .transform { builder, _, _, _, _ ->
+            builder.method(ElementMatchers.named(methodName))
+                .intercept(Advice.to(RecvInterceptor::class.java))
+        }
+        .installOnByteBuddyAgent()
 }
 
 fun main() {
